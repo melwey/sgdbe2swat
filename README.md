@@ -4,7 +4,7 @@ author:
 bibliography:
 - ./Biblio/swat.bib
 - ./Biblio/R.bib
-- ./Biblio/PTF/ptf.bib
+- ./Biblio/ptf.bib
 - ./Biblio/esdb.bib
 title: sgdbe2swat: SWAT layer from SGDBE
 ---
