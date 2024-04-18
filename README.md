@@ -1,13 +1,3 @@
----
-author:
-- M.Weynants
-bibliography:
-- ./Biblio/swat.bib
-- ./Biblio/R.bib
-- ./Biblio/ptf.bib
-- ./Biblio/esdb.bib
-title: sgdbe2swat: SWAT layer from SGDBE
----
 # sgdbe2swat
 Preparation of SWAT.SOL input file based on the Soil Geographical Database of Eurasia (SGDBE).
 
@@ -23,19 +13,19 @@ working at the river basin scale. It was developed to quantify the
 impact of land management practices in large, complex watersheds
 (<http://swatmodel.tamu.edu/>). Among all the information required to
 run the model, parameters relative to the soil physical, chemical and
-mechanical properties are needed.\
+mechanical properties are needed [^SWAT2009].\
 The Soil Geographical Database of Eurasia (SGDBE) provides a harmonised
 set of soil parameters covering Eurasia and Mediterranean countries at
-scale 1:1,000,000 [@EC2003]. It is part of the European Soil Database
+scale 1:1,000,000 [^EC2003]. It is part of the European Soil Database
 (ESDB), along with the Pedotransfer Rules Database (PTRDB), the Soil
 Profile analytical Database (SPADE) and the Database of Hydrological
-Properties of European Soils [HYPRES @Wosten1999]. Information in SGDBE
+Properties of European Soils HYPRES [^Wosten1999]. Information in SGDBE
 is available at the Soil Typological Unit (STU) level, characterised by
 attributes specifying the nature and properties of soils. For mapping
 purposes, the STUs are grouped into Soil Mapping Units (SMU) since it is
-not possible to delineate each STU at the 1:1,000,000 scale [@EC2003].\
-Newer hydraulic pedotransfer functions [@Toth2014] were developed on the
-European Hydropedological Inventory [EU-HYDI @Weynants2013] with a
+not possible to delineate each STU at the 1:1,000,000 scale [^EC2003].\
+Newer hydraulic pedotransfer functions [^Toth2014] were developed on the
+European Hydropedological Inventory (EU-HYDI) [^Weynants2013] with a
 better coverage for soils of Eastern and Southern Europe. In the text,
 they are further referred to as euptf.
 
@@ -44,15 +34,14 @@ generate the SWAT.SOL input file for all SMUs. The soil properties are
 first gathered at the STU level and are then delivered at the SMU level,
 based on the dominant STU.
 
-Generation of SWAT.SOL inputs {#swat}
+Generation of SWAT.SOL inputs
 =============================
 
 Information at the STU level is categorical. SWAT.SOL requires
 continuous input data. SWAT.SOL input data and their definition are
-given in Table [1](#tab:SWATinput){reference-type="ref"
-reference="tab:SWATinput"}. The estimation method of the SWAT.SOL input
+given in Table [1]. The estimation method of the SWAT.SOL input
 data at the STU level is summarised in Table
-[2](#tab:esdb2swat){reference-type="ref" reference="tab:esdb2swat"}. An
+[2]. An 
 extended description is given in the text.\
 The attributes needed at the soil layer level could either be retrieved
 from the estimated profile database or from the pedotransfer rules
@@ -62,61 +51,58 @@ gives rough categorical estimations for the topsoil and the subsoil of
 each STU. In order to provide homogeneous data, only attributes derived
 from the STU properties or from PTR are used.\
 All data were processed in R (version version 3.0.1). The main script
-([esdb2swat.R]{.sans-serif}) and all the functions created to generate
+([Rcode/esdb2swat.R]) and all the functions created to generate
 the SWAT inputs are distributed with this document.
 
-::: {#tab:SWATinput}
-  FIELD        RANGE         DEFINITION
-  ------------ ------------- -----------------------------------------------------------------------------------------------
-  SNAM                       Soil name
-  HYDGRP       \[A,B,C,D\]   Soil Hydrologic Group
-  SOL_ZMX      \[0,3500\]    Maximum rooting depth of soil profile (mm).
-  ANION_EXCL   \[0.01,1\]    Fraction of porosity (void space) from which anions are excluded. \[OPTIONAL\] (default: 0.5)
-  SOL_CRK      \[0,1\]       Crack volume potential of soil (% soil volume). \[OPTIONAL\]
-  TEXTURE                    Texture classes of soil layers. \[OPTIONAL\]
-  NLAYERS      \[1,10\]      Number of layers in the soil.
-  SOL_Z*i*     \[0,3500\]    Depth from soil surface to bottom of layer (mm).
-  SOL_BD*i*    \[0.9,2.5\]   Moist bulk density (g/cm$^3$).
-  SOL_AWC*i*   \[0,1\]       Available water capacity of the soil layer (mm water/mm soil).
-  SOL_K*i*     \[0,2000\]    Saturated hydraulic conductivity (mm/hr).
-  SOL_CBN*i*   \[0.05,10\]   Organic carbon content (% soil weight).
-  CLAY*i*      \[0,100\]     Clay ($<$0.002 mm) content (% soil weight).
-  SILT*i*      \[0,100\]     Silt (between 0.002 and 0.05 mm) content (% soil weight).
-  SAND*i*      \[0,100\]     Sand (between 0.05 and 2 mm) content (% soil weight).
-  ROCK*i*      \[0,100\]     Rock fragment ($>$ 2 mm) content (% total weight).
-  SOL_ALB1     \[0,0.25\]    Moist soil albedo (only for surface layer ($i=1$)).
-  USLE_K1      \[0,0.65\]    USLE equation soil erodibility (K) factor (only for surface layer ($i=1$)).
-  SOL_EC*i*    \[0,100\]     Electrical conductivity (dS/mm). \[Not currently active\]
-
-  : Codes of SWAT.SOL input attributes, with their accepted range and
+Table 1  : Codes of SWAT.SOL input attributes, with their accepted range and
   their description. ($i \in [1,10]$)
-:::
+  
+|  FIELD       | RANGE       |  DEFINITION
+|  ----------- | ------------| -----------------------------------------------------------------------------------------------
+|  SNAM        |             |  Soil name
+|  HYDGRP      | \[A,B,C,D\] |  Soil Hydrologic Group
+|  SOL_ZMX     | \[0,3500\]  |  Maximum rooting depth of soil profile (mm).
+|  ANION_EXCL  | \[0.01,1\]  |  Fraction of porosity (void space) from which anions are excluded. \[OPTIONAL\] (default: 0.5)
+|  SOL_CRK     | \[0,1\]     |  Crack volume potential of soil (% soil volume). \[OPTIONAL\]
+|  TEXTURE     |             |  Texture classes of soil layers. \[OPTIONAL\]
+|  NLAYERS     | \[1,10\]    |  Number of layers in the soil.
+|  SOL_Z*i*    | \[0,3500\]  |  Depth from soil surface to bottom of layer (mm).
+|  SOL_BD*i*   | \[0.9,2.5\] |  Moist bulk density (g/cm$^3$).
+|  SOL_AWC*i*  | \[0,1\]     |  Available water capacity of the soil layer (mm water/mm soil).
+|  SOL_K*i*    | \[0,2000\]  |  Saturated hydraulic conductivity (mm/hr).
+|  SOL_CBN*i*  | \[0.05,10\] |  Organic carbon content (% soil weight).
+|  CLAY*i*     | \[0,100\]   |  Clay ($<$0.002 mm) content (% soil weight).
+|  SILT*i*     | \[0,100\]   |  Silt (between 0.002 and 0.05 mm) content (% soil weight).
+|  SAND*i*     | \[0,100\]   |  Sand (between 0.05 and 2 mm) content (% soil weight).
+|  ROCK*i*     | \[0,100\]   |  Rock fragment ($>$ 2 mm) content (% total weight).
+|  SOL_ALB1    | \[0,0.25\]  |  Moist soil albedo (only for surface layer ($i=1$)).
+|  USLE_K1     | \[0,0.65\]  |  USLE equation soil erodibility (K) factor (only for surface layer ($i=1$)).
+|  SOL_EC*i*   | \[0,100\]   |  Electrical conductivity (dS/mm). \[Not currently active\]
 
-::: {#tab:esdb2swat}
-  FIELD        R FILE      DESCRIPTION
-  ------------ ----------- ----------------------------------------------------------------------------------------------------
-  SNAM                     STU/SMU code
-  HYDGRP       hydrgrp.R   PTR based on topsoil and subsoil dominant texture classes and depth class of an impermeable layer.
-  SOL_ZMX      solzmx.R    Recode depth class of an obstacle to roots (ROO)
-  ANION_EXCL               Set to default value: 0.5
-  SOL_CRK                  Set to default value: 0
-  TEXTURE                  Layers texture codes
-  NLAYERS      solzmx.R    Default to 2.
-  SOL_Z*i*     solzmx.R    First layer set to 30 cm, second to SOL_ZMX
-  SOL_BD*i*                Obtained from euptf
-  SOL_AWC*i*               Obtained from euptf
-  SOL_K*i*                 Obtained from euptf
-  SOL_CBN*i*   OC_sub.R    According to OC_TOP, set to 0, 1.5, 4 or 10 % weight. For subsoil, based on @Hiederer2009.
-  CLAY*i*      av.text.R   Transform texture class (TEXTSRFDOM and TEXTSUBDOM) into clay, silt, sand contents.
-  SILT*i*      av.text.R   
-  SAND*i*      av.text.R   
-  ROCK*i*                  According to PTR VS (volume of stone)
-  SOL_ALB1     albedo.R    Based on [SWATxxx.mdb]{.sans-serif}
-  USLE_K1                  According to PTR ERODIBILITY and @rusle2
-  SOL_EC*i*                Set to default value: 0.
+Table 2 : Rules for attributing SWAT.SOL input values to STU's.
 
-  : Rules for attributing SWAT.SOL input values to STU's.
-:::
+ | FIELD       | R FILE     | DESCRIPTION
+ | ------------| -----------| ----------------------------------------------------------------------------------------------------
+ | SNAM        |            | STU/SMU code
+ | HYDGRP      | hydrgrp.R  | PTR based on topsoil and subsoil dominant texture classes and depth class of an impermeable layer.
+ | SOL_ZMX     | solzmx.R   | Recode depth class of an obstacle to roots (ROO)
+ | ANION_EXCL  |            | Set to default value: 0.5
+ | SOL_CRK     |            | Set to default value: 0
+ | TEXTURE     |            | Layers texture codes
+ | NLAYERS     | solzmx.R   | Default to 2.
+ | SOL_Z*i*    | solzmx.R   | First layer set to 30 cm, second to SOL_ZMX
+ | SOL_BD*i*   |            | Obtained from euptf
+ | SOL_AWC*i*  |            | Obtained from euptf
+ | SOL_K*i*    |            | Obtained from euptf
+ | SOL_CBN*i*  | OC_sub.R   | According to OC_TOP, set to 0, 1.5, 4 or 10 % weight. For subsoil, based on [^Hiederer2009].
+ | CLAY*i*     | av.text.R  | Transform texture class (TEXTSRFDOM and TEXTSUBDOM) into clay, silt, sand contents.
+ | SILT*i*     | av.text.R  | 
+ | SAND*i*     | av.text.R  | 
+ | ROCK*i*     |            | According to PTR VS (volume of stone)
+ | SOL_ALB1    | albedo.R   | Based on [SWATxxx.mdb]
+ | USLE_K1     |            | According to PTR ERODIBILITY and @rusle2
+ | SOL_EC*i*   |            | Set to default value: 0.
+
 
 SNAM
 ----
@@ -128,11 +114,11 @@ HYDGRP
 ------
 
 The Soil Hydrologic Group (HYDGRP) classes are defined according to the
-National Engineering Handbook [@USDA2007], on the basis of the depth
+National Engineering Handbook [^USDA2007], on the basis of the depth
 class to an impermeable layer and the saturated hydraulic conductivity
 of the least transmissive layer. The former is directly available for
 each STU. The latter is obtained from the dominant texture class of the
-surface and subsurface layers using euptf [@Toth2014]. A new rule is
+surface and subsurface layers using euptf [^Toth2014]. A new rule is
 therefore established. When no information is available for one or two
 of the input variables, the least favourable class applicable to the
 other variable(s) is attributed. When no information at all is
@@ -181,7 +167,7 @@ The number of layers defaults to 2, unless SOL_ZMX is less or equal to
 30 cm.\
 The subsequent attributes must be set for each layer.
 
-SOL_Zi {#solz}
+SOL_Zi
 ------
 
 The depth of the first layer, SOL_Z1, defaults to 30 cm, unless SOL_ZMX
@@ -203,7 +189,7 @@ SOL_CBN
 The organic carbon (OC) content of the topsoil can be approximated using
 PTR21's result OC_TOP. The possible values Very low, Low, Medium and
 High are transformed into 0.1, 1.5, 4 and 10 % soil weight respectively.
-PTR 21 has been revised by @Jones2005. In the revised version, there are
+PTR 21 has been revised [^Jones2005]. In the revised version, there are
 6 classes of OC_TOP, allowing to better estimate soil organic carbon
 content of organic soils. However the output of the revised PTR is only
 available as a raster file, because it uses CLC99 as land use input and
@@ -213,7 +199,7 @@ SMUs.\
 We highlight here the issue of the handling of peat soils or organic
 layers in SWAT, since, according to SWAT example database, the model's
 maximum allowed value for organic carbon content is 10 % weight.\
-For the subsoil, estimations were made based on @Hiederer2009. For
+For the subsoil, estimations were made based on [^Hiederer2009]. For
 organic soils, OC content in the subsoil is set to 110 % of the value in
 the topsoil, regardless of the land use. For mineral soils, different
 coefficients are applied as a function of the land use. For arable
@@ -251,7 +237,7 @@ SOL_ALB
 
 The soil albedo is roughly estimated from the soil carbon content, with
 a PTF calibrated on the sample soil dataset provided with SWAT (tables
-[usersoil]{.sans-serif} in [SWAT2009.mdb]{.sans-serif}). The minimum
+[usersoil]{.sans-serif} in [SWAT2009.mdb]. The minimum
 albedo is set to 0.01 and the maximum to 0.23, for soil organic carbon
 content greater or equal to 1.45 % weight. Between these two extremes a
 simple linear regression is applied.
@@ -261,7 +247,7 @@ USLE_K
 
 The erodibility factor of the USLE equation is estimated from PTR623,
 which gives classes of erodibility. Values are attributed to the classes
-according to the RUSLE reference guide [@rusle2].
+according to the RUSLE reference guide [^rusle2].
 
 Deliverable
 ===========
@@ -270,26 +256,35 @@ Files are provided as inputs ready for SWAT2009. An ESRI grid, 1 km
 resolution, gives the soil mapping units (SMU) for Eurasia. A ESRI
 shapefile with the same information is also included. A dBase table
 gives SWAT.SOL required data. The table must be appended to the
-[usersoil]{.sans-serif} table in [SWATxxxx.mdb]{.sans-serif}. The SNAM
+[usersoil] table in [SWATxxxx.mdb]. The SNAM
 field gives the SMU code and is used to link the table and the grid. The
 properties are those of the dominant STU. The representativeness of the
-dominant STU in the SMU is variable. Figure
-[1](#fig:histSTUdom){reference-type="ref" reference="fig:histSTUdom"}
-shows a histogram of the percentage of the SMU area covered by the
-dominant STU. The frequency of SMU for which the dominant STU cannot be
-clearly identified are shown in a different colour.
-
-![Frequency of percentage of SMU area covered by dominant STU. The flag
-indicates whether there are more than on STU covering the same
-proportion of the SMU area (TRUE) or there is only one
-(FALSE)](../Rcode/hist.pdf){#fig:histSTUdom}
+dominant STU in the SMU is variable. 
 
 #### Warning!
 
-The dBase file could not be imported to [SWAT2009.mdb]{.sans-serif} with
+The dBase file could not be imported to SWAT2009.mdb with
 Microsoft Access 2010. A csv file was created and used instead. However
-when imported and appended to [usersoil]{.sans-serif} table, some fields
+when imported and appended to usersoil table, some fields
 failed to produce the expected values. SOL_AWC2 and SOL_K2 were
 considered as integers while they are floats (and they are in the csv
 and appear as such if open with Excel). However when ckecking the Field
 Size in Design View, it is rightly set to Double and not Intger.
+
+Aknowledgment
+=============
+This work was conducted in the framework of [FP7 project MYWATER, Grant agreement ID: 263188](https://cordis.europa.eu/project/id/263188).
+
+References
+==========
+[^SWAT2009]: Neitsch, S. L., Arnold, J. G., Kiniry, J. & Williams, J. R. Soil and Water Assessment Tool Input/Output File Documentation Version 2009. (2010).
+[^EC2003]: European Soil Database (version 2.0). European Commission Joint Research Centre, Italy. https://esdac.jrc.ec.europa.eu/resource-type/european-soil-database-soil-properties 
+[^Wosten1999]: Woesten, J. H. M., Lilly, A., Nemes, A. & Le Bas, C. Development and use of a database of hydraulic properties of European soils. Geoderma 90, 169–185 (1999).
+[^Toth2014]: Tóth, B. et al. New generation of hydraulic pedotransfer functions for Europe. European Journal of Soil Science 66, 226–238 (2015). [doi:10.1111/ejss.12192](https://doi.org/10.1111/ejss.12192)
+[^Weynants2013]: Weynants, M. et al. European Hydropedological Inventory (EU-HYDI). (Publications Office of the European Union, Luxembourg, 2013). [doi:10.2788/5936](https://doi.org/10.2788/5936).
+[^Hiederer2009]: Hiederer, R. Distribution of Organic Carbon in Soil Profile Data. (2009).
+[^USDA2007]: USDA-Natural Resources Conservation Service (NRCS). Section: Hydrologic Soil Groups in Part 630 Hydrology National Engineering Handbook (2007).
+[^Jones2005]: Jones, R. J. A., Hiederer, R., Rusco, E. & Montanarella, L. Estimating organic carbon in the soils of Europe for policy support. European Journal of Soil Science 56, 655–671 (2005).
+[^rusle2]: USDA-Agricultural Research Service. Draft User’s Reference Guide - Revised Universal Soil Loss Equation Version 2. (2006).
+
+
